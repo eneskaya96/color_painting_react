@@ -9,7 +9,21 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ width, height }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState<boolean>(false);
   const [color, setColor] = useState<string>('#000000');
+  const [imageLoaded, setImageLoaded] = useState<boolean>(false); 
   const [lineWidth, setLineWidth] = useState<number>(5);
+
+  const drawImage = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
+
+    const image = new Image();
+    image.src = `/images/deneme.png`;
+    image.onload = () => {
+      ctx.drawImage(image, 0, 0, width, height);
+      setImageLoaded(true);
+    };
+  };
 
   // Adjust this to handle both MouseEvent and TouchEvent for the canvas
   const getCoordinates = (event: MouseEvent | TouchEvent) => {
@@ -66,6 +80,11 @@ const DrawingCanvas: React.FC<DrawingCanvasProps> = ({ width, height }) => {
     }
     setIsDrawing(false);
   };
+
+  useEffect(() => {
+    console.log("DRAW");
+    drawImage();
+  }, [imageLoaded]); 
 
   useEffect(() => {
     const canvas = canvasRef.current;
